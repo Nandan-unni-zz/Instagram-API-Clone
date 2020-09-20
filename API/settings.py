@@ -2,6 +2,8 @@
 
 import os
 
+AUTH_USER_MODEL = 'user.User'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_ROOT = os.path.join(BASE_DIR, 'templates')
 
@@ -22,6 +24,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'user',
+    'post',
+    'comment',
+    'hashtag',
 ]
 
 MIDDLEWARE = [

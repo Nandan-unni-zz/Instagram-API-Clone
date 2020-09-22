@@ -7,6 +7,12 @@ class CreateUserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ['email', 'full_name', 'username', 'birthday', 'password']
 
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
 
 class MiniUserSerializer(serializers.ModelSerializer):
     ''' Mini version of User Serializer '''

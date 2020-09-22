@@ -3,11 +3,21 @@
 from django.urls import path
 from user.views import (GetUserAPI,
                         CreateUserAPI,
+                        LoginUserAPI,
+                        LogoutUserAPI,
                         UpdateUserAPI,
                         FollowUserAPI,
                         DeleteUserAPI)
 
 urlpatterns = [
+
+    path('login/',
+         LoginUserAPI.as_view(),
+         name='login_user_api'),
+
+    path('logout/<int:pk>/',
+         LogoutUserAPI.as_view(),
+         name='logout_user_api'),
 
     path('create/',
          CreateUserAPI.as_view(),
@@ -21,7 +31,7 @@ urlpatterns = [
          UpdateUserAPI.as_view(),
          name='update_user_api'),
 
-    path('follow/<int:pk>/',
+    path('follow/<int:req_user_pk>/<int:ig_user_pk>/',
          FollowUserAPI.as_view(),
          name='follow_user-api'),
 

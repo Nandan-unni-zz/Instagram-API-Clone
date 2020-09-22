@@ -6,6 +6,7 @@ AUTH_USER_MODEL = 'user.User'
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_ROOT = os.path.join(BASE_DIR, 'templates')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SECRET_KEY = 't)bds0#bn!lbl9^u$e=ba+8@_zhh@$5)tjb9-8*!ztu_*$p772'
 

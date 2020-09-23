@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 from django.conf import settings
+from post.models import Post
 
 class UserManager(BaseUserManager):
     ''' User Manager '''
@@ -80,11 +81,11 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    # def post_count(self):
-    #     ''' No of posts '''
-    #     if self.post_set.count():
-    #         return self.post_set.count()
-    #     return 0
+    def post_count(self):
+        ''' No of posts '''
+        if self.post_set.count():
+            return self.post_set.count()
+        return 0
 
     def followers_count(self):
         ''' No of followers '''
@@ -97,3 +98,7 @@ class User(AbstractUser):
         if self.following.count():
             return self.following.count()
         return 0
+
+    def saved_posts(self):
+        ''' To get the saved posts by the user '''
+        return Post.objects.filter(saves__id=self.pk)

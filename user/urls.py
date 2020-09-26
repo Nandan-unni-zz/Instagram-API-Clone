@@ -6,6 +6,7 @@ from user.views import (GetUserAPI,
                         LoginUserAPI,
                         LogoutUserAPI,
                         UpdateUserAPI,
+                        UploadUserPicAPI,
                         FollowUserAPI,
                         DeleteUserAPI)
 
@@ -30,6 +31,10 @@ urlpatterns = [
     path('update/<int:pk>/',
          UpdateUserAPI.as_view(),
          name='update_user_api'),
+
+    path('upload/<int:pk>/',
+         UploadUserPicAPI.as_view(),
+         name='upload_user_pic_api'),
 
     path('follow/<int:req_user_pk>/<int:ig_user_pk>/',
          FollowUserAPI.as_view(),

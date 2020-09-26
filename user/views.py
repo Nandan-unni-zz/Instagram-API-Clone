@@ -14,7 +14,7 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 # Local Imports
-from user.serializers import CreateUserSerializer, UserSerializer
+from user.serializers import CreateUserSerializer, UserSerializer, UploadUserPicSerializer
 from user.tests import message
 
 
@@ -80,6 +80,11 @@ class UpdateUserAPI(UpdateAPIView):
     queryset = get_user_model().objects.all()
 
 
+class UploadUserPicAPI(UpdateAPIView):
+    serializer_class = UploadUserPicSerializer
+    queryset = get_user_model().objects.all()
+
+
 class FollowUserAPI(APIView):
     def get(self, request, *args, **kwargs):
         try:
@@ -107,15 +112,21 @@ class FollowUserAPI(APIView):
 
 class DeleteUserAPI(APIView):
     def post(self, request, *args, **kwargs):
-        username = get_user_model().objects.get(pk=kwargs['pk']).username
-        password = request.data.get('password', None)
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            message(user.username + ' deleted their account.')
-            user.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            username = get_user_model().objects.get(pk=kwargs['pk']).username
+        except get_user_model().DoesNotExist:
+            username = None
+        if username is not None:
+            password = request.data.get('password', None)
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                message(user.username + ' deleted their account.')
+                user.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
+                            data={'error': 'Invalid credentials'})
         return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
-                        data={'error': 'Invalid credentials'})
+                        data={"error": "Invalid credentials"})
 
 
 class DeactivateUserAPI(APIView):

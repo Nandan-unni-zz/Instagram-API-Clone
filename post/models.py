@@ -13,8 +13,9 @@ class Post(models.Model):
     caption = models.CharField('Caption', max_length=50, blank=True)
     location = models.CharField('Location', max_length=30, blank=True)
     tag = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                 related_name='Tagged User',
-                                 on_delete=models.CASCADE)
+                                 related_name='Tagged_Users',
+                                 blank=True,
+                                 symmetrical=False)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                    related_name="Likes",
                                    blank=True,

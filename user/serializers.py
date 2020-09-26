@@ -30,3 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
                   'birthday', 'profile_pic', 'website', 'bio',
                   'followers', 'followers_count',
                   'following', 'following_count']
+
+class UploadUserPicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['profile_pic']

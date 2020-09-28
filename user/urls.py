@@ -2,6 +2,7 @@
 
 from django.urls import path
 from user.views import (GetUserAPI,
+                        GetMyProfileAPI,
                         CreateUserAPI,
                         LoginUserAPI,
                         LogoutUserAPI,
@@ -26,6 +27,10 @@ urlpatterns = [
 
     path('get/<int:pk>/',
          GetUserAPI.as_view(),
+         name='get_user_api'),
+
+    path('me/<int:pk>/',
+         GetMyProfileAPI.as_view(),
          name='get_user_api'),
 
     path('update/<int:pk>/',

@@ -1,6 +1,7 @@
 """ User API views for CRUD and other operations """
 
 # Views and Responses
+import random
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView
@@ -14,7 +15,10 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 # Local Imports
-from user.serializers import CreateUserSerializer, UserSerializer, UploadUserPicSerializer
+from user.serializers import (CreateUserSerializer,
+                              UserSerializer,
+                              MyProfileSerializer,
+                              UploadUserPicSerializer)
 from user.tests import message
 
 
@@ -58,7 +62,7 @@ class CreateUserAPI(APIView):
             user.is_active = True
             user.save()
             message(user.username + ' created an account.')
-            code = 309756
+            code = random.randint(100000, 999999)
             email_subject = '{} is your Instagram Code'.format(code)
             mail = render_to_string('activate_mail.html', {'email': user.email, 'code': code})
             to_email = user.email
@@ -66,13 +70,19 @@ class CreateUserAPI(APIView):
             email.content_subtype = 'html'
             email.send()
             message('Email send to ' + user.username)
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED, data={"code": code})
         return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, data=serializer.errors)
 
 
 class GetUserAPI(RetrieveAPIView):
     serializer_class = UserSerializer
     queryset = get_user_model().objects.all()
+
+
+class GetMyProfileAPI(RetrieveAPIView):
+    serializer_class = MyProfileSerializer
+    queryset = get_user_model().objects.all()
+    permission_classes = None  # need to add permission classes
 
 
 class UpdateUserAPI(UpdateAPIView):
@@ -142,8 +152,3 @@ class DeactivateUserAPI(APIView):
         return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
                         data={'error': 'Invalid credentials'})
 
-
-class GetProfileAPI(RetrieveAPIView):
-    serializer_class = UserSerializer
-    queryset = get_user_model().objects.all()
-    permission_classes = None

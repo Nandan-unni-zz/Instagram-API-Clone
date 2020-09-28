@@ -20,7 +20,20 @@ class MiniUserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ['pk', 'username', 'full_name', 'profile_pic']
 
+
 class UserSerializer(serializers.ModelSerializer):
+    ''' Serializer for R operaton '''
+    followers = MiniUserSerializer(many=True)
+    following = MiniUserSerializer(many=True)
+    class Meta:
+        model = get_user_model()
+        fields = ['pk', 'full_name', 'username',
+                  'profile_pic', 'website', 'bio',
+                  'followers', 'followers_count',
+                  'following', 'following_count']
+
+
+class MyProfileSerializer(serializers.ModelSerializer):
     ''' Serializer for RUD operatons '''
     followers = MiniUserSerializer(many=True)
     following = MiniUserSerializer(many=True)
@@ -30,6 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'birthday', 'profile_pic', 'website', 'bio',
                   'followers', 'followers_count',
                   'following', 'following_count']
+
 
 class UploadUserPicSerializer(serializers.ModelSerializer):
     class Meta:

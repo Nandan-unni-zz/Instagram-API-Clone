@@ -81,12 +81,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    def post_count(self):
-        ''' No of posts '''
-        if self.post_set.count():
-            return self.post_set.count()
-        return 0
-
     def followers_count(self):
         ''' No of followers '''
         if self.followers.count():
@@ -99,6 +93,20 @@ class User(AbstractUser):
             return self.following.count()
         return 0
 
+    def post_count(self):
+        ''' No of posts '''
+        if self.post_set.count():
+            return self.post_set.count()
+        return 0
+
+    def posts(self):
+        ''' Get all the posts '''
+        return Post.objects.filter(author__id=self.pk)
+
+    def tagged_posts(self):
+        ''' Get all tagged in posts '''
+        return Post.objects.filter(tags__id=self.pk)
+
     def saved_posts(self):
-        ''' To get the saved posts by the user '''
+        ''' Get all saved posts '''
         return Post.objects.filter(saves__id=self.pk)

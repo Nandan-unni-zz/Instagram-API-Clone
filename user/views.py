@@ -1,7 +1,6 @@
 """ User API views for CRUD and other operations """
 
 # Views and Responses
-import random
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView
@@ -15,11 +14,13 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 # Local Imports
+from post.serializers import PostSerializer
 from user.serializers import (CreateUserSerializer,
                               UserSerializer,
                               MyProfileSerializer,
                               UploadUserPicSerializer)
 from user.tests import message
+from user.tokens import email_auth_otp
 
 
 class LoginUserAPI(APIView):
@@ -60,9 +61,10 @@ class CreateUserAPI(APIView):
             user = serializer.save()
             user.full_name = user.full_name.title()
             user.is_active = True
+            code = email_auth_otp.get_otp()
+            user.reg_token = code
             user.save()
             message(user.username + ' created an account.')
-            code = random.randint(100000, 999999)
             email_subject = '{} is your Instagram Code'.format(code)
             mail = render_to_string('activate_mail.html', {'email': user.email, 'code': code})
             to_email = user.email
@@ -151,4 +153,22 @@ class DeactivateUserAPI(APIView):
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
                         data={'error': 'Invalid credentials'})
+
+
+class FeedAPI(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            user = get_user_model().objects.get(pk=kwargs['req_user_pk'])
+        except get_user_model().DoesNotExist:
+            user = None
+        if user is not None:
+            data = user.posts()
+            message(data)
+            for following in user.following.all():
+                data = data | following.posts()
+            data = data.order_by('-posted_time')
+            serializer = PostSerializer(data, many=True)
+            return Response(status=status.HTTP_200_OK, data=serializer.data)
+        return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
+                        data={"error": "Invalid credentials"})
 

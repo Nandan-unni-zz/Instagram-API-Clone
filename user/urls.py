@@ -9,9 +9,14 @@ from user.views import (GetUserAPI,
                         UpdateUserAPI,
                         UploadUserPicAPI,
                         FollowUserAPI,
-                        DeleteUserAPI)
+                        DeleteUserAPI,
+                        FeedAPI)
 
 urlpatterns = [
+
+    path('feed/<int:req_user_pk>/',
+         FeedAPI.as_view(),
+         name='user_feed_api'),
 
     path('login/',
          LoginUserAPI.as_view(),

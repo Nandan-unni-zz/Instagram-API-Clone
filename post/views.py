@@ -19,21 +19,6 @@ from post.models import Post
 from user.tests import message
 
 
-class FeedAPI(APIView):
-    def get(self, request, *args, **kwargs):
-        try:
-            user = get_user_model().objects.get(pk=kwargs['req_user_pk'])
-        except get_user_model().DoesNotExist:
-            user = None
-        if user is not None:
-            # data = Post.objects.filter(author__pk=user.followers.pk)
-            data = Post.objects.all()
-            serializer = PostSerializer(data, many=True)
-            return Response(status=status.HTTP_200_OK, data=serializer.data)
-        return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
-                        data={"error": "Invalid credentials"})
-
-
 class CreatePostAPI(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data

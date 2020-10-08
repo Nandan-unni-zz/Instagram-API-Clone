@@ -73,6 +73,7 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    reg_token = models.IntegerField('Registration Token', blank=True, null=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'username'

@@ -10,15 +10,13 @@ class CreatePostSerializer(serializers.ModelSerializer):
 class PostAuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['pk', 'username', 'full_name']
+        fields = ['pk', 'username', 'full_name', 'profile_pic']
 
 class PostSerializer(serializers.ModelSerializer):
     author = PostAuthorSerializer()
     likes = PostAuthorSerializer(many=True)
-    saves = PostAuthorSerializer(many=True)
     tags = PostAuthorSerializer(many=True)
     class Meta:
         model = Post
         fields = ['pk', 'author', 'image', 'caption', 'location',
-                  'likes', 'likes_count',
-                  'saves', 'tags']
+                  'likes', 'likes_count', 'tags']

@@ -2,6 +2,7 @@
 
 # Views and Responses
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView
 from rest_framework.views import APIView
@@ -16,7 +17,8 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 # Local Imports
 from post.serializers import PostSerializer
 from user.serializers import (CreateUserSerializer,
-                              UserSerializer,
+                              PublicUserSerializer,
+                              PrivateUserSerializer,
                               MyProfileSerializer,
                               UploadUserPicSerializer)
 from user.tests import message
@@ -76,19 +78,29 @@ class CreateUserAPI(APIView):
         return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, data=serializer.errors)
 
 
-class GetUserAPI(RetrieveAPIView):
-    serializer_class = UserSerializer
-    queryset = get_user_model().objects.all()
+class GetUserAPI(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            ig_user = get_user_model().objects.get(pk=kwargs['ig_user'])
+        except get_user_model().DoesNotExist:
+            ig_user = None
+        if ig_user is not None:
+            if ig_user.is_private:
+                serializer = PrivateUserSerializer(ig_user)
+                return Response(status=status.HTTP_200_OK,
+                                data=serializer.data)
+            serializer = PublicUserSerializer(ig_user)
+            return Response(status=status.HTTP_200_OK,
+                            data=serializer.data)
 
 
 class GetMyProfileAPI(RetrieveAPIView):
     serializer_class = MyProfileSerializer
     queryset = get_user_model().objects.all()
-    permission_classes = None  # need to add permission classes
 
 
 class UpdateUserAPI(UpdateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = MyProfileSerializer
     queryset = get_user_model().objects.all()
 
 

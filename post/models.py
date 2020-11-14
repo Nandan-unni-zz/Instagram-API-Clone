@@ -13,10 +13,6 @@ class Post(models.Model):
     posted_time = models.DateTimeField('Post_posted_time', auto_now_add=True)
     caption = models.CharField('Caption', max_length=50, blank=True)
     location = models.CharField('Location', max_length=30, blank=True)
-    tags = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                  related_name='Post_Tags',
-                                  blank=True,
-                                  symmetrical=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                    related_name="Post_Likes",
                                    blank=True,
@@ -25,6 +21,14 @@ class Post(models.Model):
                                    related_name="Post_Saves",
                                    blank=True,
                                    symmetrical=False)
+    usertags = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                      related_name='Post_Tags',
+                                      blank=True,
+                                      symmetrical=True)
+    hashtags = models.ManyToManyField('hashtag.Hashtag',
+                                      related_name='Post_Hashags',
+                                      blank=True,
+                                      symmetrical=True)
 
     def __str__(self):
         return "{}'s post({})".format(self.author, self.pk)

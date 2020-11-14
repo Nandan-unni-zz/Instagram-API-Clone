@@ -9,10 +9,10 @@ class Comment(models.Model):
                                related_name='Comment_Author',
                                on_delete=models.CASCADE)
     content = models.CharField('Content', max_length=2000, blank=False)
-    tags = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                  related_name='Comment_Tags',
-                                  blank=True,
-                                  symmetrical=True)
+    usertags = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                      related_name='Comment_Tags',
+                                      blank=True,
+                                      symmetrical=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                    related_name="Comment_Likes",
                                    blank=True,

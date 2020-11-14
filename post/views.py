@@ -22,22 +22,39 @@ from user.tests import message
 class CreatePostAPI(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
-        tags = []
-        for tag_pk in data.get('tags'):
+        usertags = []
+        hashtags = []
+        for usertag_pk in data.get('usertags'):
             try:
-                tag = get_user_model().objects.get(pk=tag_pk)
+                usertag = get_user_model().objects.get(pk=usertag_pk)
             except get_user_model().DoesNotExist:
-                tag = None
-            if tag is not None:
-                tags.append(tag)
-        post = Post(
-            author=get_user_model().objects.get(pk=data.get('author')),
-            image=request.FILES["image"],
-            caption=data.get('caption'),
-            location=data.get('location')
-        )
-        post.save()
-        return Response(status=status.HTTP_201_CREATED)
+                usertag = None
+            if usertag is not None:
+                usertags.append(usertag)
+        for hashtag_pk in data.get('hashtags'):
+            try:
+                hashtag = get_user_model().objects.get(pk=hashtag_pk)
+            except get_user_model().DoesNotExist:
+                hashtag = None
+            if hashtag is not None:
+                hashtags.append(hashtag)
+        try:
+            author = get_user_model().objects.get(pk=data.get('author'))
+        except get_user_model().DoesNotExist:
+            author = None
+        if author is not None:
+            post = Post(
+                author=author,
+                image=request.FILES["image"],
+                caption=data.get('caption'),
+                location=data.get('location'),
+                usertags=usertags,
+                hashtags=hashtags,
+            )
+            post.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_404_NOT_FOUND,
+                        data={"error": "Invalid pk values"})
 
 
 class GetPostAPI(RetrieveAPIView):

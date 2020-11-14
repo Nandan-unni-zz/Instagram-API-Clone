@@ -1,6 +1,8 @@
 """ Config for API """
 
 import os
+from dotenv import load_dotenv
+load_dotenv() # For loading ENV variables from .env file
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -17,8 +19,8 @@ ALLOWED_HOSTS = ['localhost']
 CORS_ORIGIN_WHITELIST = ('http://localhost:3000', )
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'XXXXXX@gmail.com'
-EMAIL_HOST_PASSWORD = 'XXXXXXXXX'
+EMAIL_HOST_USER = os.getenv("EMAIL_ID")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
